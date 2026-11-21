@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoverForge — Tropical Cover Art Maker</title>
+<meta name="description" content="Offline web app that turns any photo and caption into original tropical cover art, exported as a PNG.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark" aria-hidden="true">CF</div>
+    <div>
+      <h1>CoverForge</h1>
+      <p>Turn a photo into share-ready cover art — fully offline.</p>
+    </div>
+  </div>
+  <span class="offline-badge">100% offline &middot; No uploads leave this device</span>
+</header>
+
+<main class="layout">
+  <section class="controls" aria-label="Cover controls">
+    <div class="panel">
+      <h2>1. Photo</h2>
+      <div id="dropZone" class="drop-zone" tabindex="0" role="button" aria-label="Upload a photo">
+        <strong>Drop a photo here</strong>
+        <span>or click to browse — JPG, PNG, WebP</span>
+        <input id="photoInput" type="file" accept="image/*" hidden>
+      </div>
+      <div class="row">
+        <button id="demoBtn" class="btn btn-secondary" type="button">Use demo scene</button>
+        <button id="clearPhotoBtn" class="btn btn-ghost" type="button">Clear photo</button>
+      </div>
+      <label class="field">
+        <span>Photo zoom</span>
+        <input id="zoomInput" type="range" min="100" max="250" value="100">
+      </label>
+      <label class="field">
+        <span>Photo focus (vertical)</span>
+        <input id="focusInput" type="range" min="0" max="100" value="50">
+      </label>
+    </div>
+
+    <div class="panel">
+      <h2>2. Words</h2>
+      <label class="field">
+        <span>Title</span>
+        <input id="titleInput" type="text" maxlength="42" value="VICE HARBOR">
+      </label>
+      <label class="field">
+        <span>Caption / subtitle</span>
+        <input id="subtitleInput" type="text" maxlength="72" value="One last ride along the neon coast">
+      </label>
+      <label class="field">
+        <span>Tag (top corner)</span>
+        <input id="tagInput" type="text" maxlength="24" value="ORIGINAL EDITION">
+      </label>
+    </div>
+
+    <div class="panel">
+      <h2>3. Style</h2>
+      <div class="style-grid" role="radiogroup" aria-label="Cover style">
+        <label class="style-card">
+          <input type="radio" name="style" value="sunset" checked>
+          <span class="swatch swatch-sunset" aria-hidden="true"></span>
+          <strong>Sunset Vice</strong>
+          <small>Warm sunset wash, teal shadows, classic bottom title block.</small>
+        </label>
+        <label class="style-card">
+          <input type="radio" name="style" value="neon">
+          <span class="swatch swatch-neon" aria-hidden="true"></span>
+          <strong>Neon Night</strong>
+          <small>Midnight blues, glowing frame, top title with neon underline.</small>
+        </label>
+        <label class="style-card">
+          <input type="radio" name="style" value="halftone">
+          <span class="swatch swatch-halftone" aria-hidden="true"></span>
+          <strong>Comic Halftone</strong>
+          <small>Bold ink border, halftone dots, angled comic title banner.</small>
+        </label>
+      </div>
+      <label class="field checkbox">
+        <input id="grainInput" type="checkbox" checked>
+        <span>Add print grain / texture</span>
+      </label>
+    </div>
+
+    <div class="panel actions">
+      <h2>4. Export</h2>
+      <p class="hint">Exports a 1024 &times; 1536 PNG (2:3 portrait cover ratio) — ready to share.</p>
+      <button id="exportBtn" class="btn btn-primary" type="button">Download PNG (1024px)</button>
+      <p id="status" class="status" role="status" aria-live="polite">Demo scene loaded. Add your own photo anytime.</p>
+    </div>
+  </section>
+
+  <section class="preview-wrap" aria-label="Live preview">
+    <div class="preview-head">
+      <h2>Live preview</h2>
+      <span id="previewMeta">1024 &times; 1536 &middot; PNG</span>
+    </div>
+    <!-- The canvas itself is the export surface: internal size = export size. -->
+    <canvas id="coverCanvas" width="1024" height="1536" aria-label="Cover art preview"></canvas>
+  </section>
+</main>
+
+<footer class="footer">
+  <p>Original artwork only. CoverForge is an independent tool and is not affiliated with any game publisher. All processing happens locally in your browser.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
