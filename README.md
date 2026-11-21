@@ -1,81 +1,87 @@
-# CoverForge — Tropical Cover Art Maker
+# CoverForge — Multi-Panel Cover Art Maker
 
-An original, fully offline web app that turns **any photo + a caption** into
-share-ready, tropical cover art and exports it as a **PNG**.
+An original, fully offline web app that turns **your photos + a caption** into
+multi-panel, poster-style cover art and exports it as a **PNG** in the common
+post sizes.
 
-Built as a prototype entry for the make.fun bounty **`gta6-cover-art-01` —
-"Make GTA 6 Cover Art"**. All artwork, layout and code in this folder are
-original. It uses no game logos, trademarks, fonts, or copied art, and it is
-not affiliated with any game publisher.
+Built as an entry for the make.fun bounty **`gta6-cover-art-01` — "Make GTA 6
+Cover Art"**, laid out in the official kit format. All artwork, layout and code
+are original. It uses no game logos, trademarks, fonts, or copied art, and it
+is not affiliated with any game publisher.
 
 ## What it does
 
-1. Drop in a photo (or use the built-in generated demo scene).
-2. Type a title, a caption/subtitle, and a small corner tag.
-3. Pick one of three original cover treatments (below).
-4. Watch the portrait cover update live.
-5. Click **Download PNG** and get a **1024 × 1536** file (2:3 portrait cover
-   ratio, ≥1024px wide) ready to share.
+1. Add one or several of your own photos (file picker or drag-and-drop).
+   Your first photo fills all five panels, each panel with a different crop.
+2. Click a panel (in the preview or the panel picker) and fine-tune it:
+   choose which photo it shows (or the built-in demo scene), and adjust its
+   **zoom** and **left/right + up/down position**.
+3. Edit the **title (caption)**, subtitle and corner tag.
+4. Pick one of three original colour styles (below) and optional print grain.
+5. Export a PNG at **1080 × 1080**, **1080 × 1350** or **1920 × 1080**.
 
-Everything runs locally in the browser. No photo is uploaded anywhere, there
-are no network calls, and there are no external fonts, images, CDNs or
-libraries — the app works from its own files with the internet unplugged.
+Everything runs locally in the browser. Photos are read on your own machine
+and never uploaded; there are no network calls, no external fonts, images,
+CDNs or libraries — the app works from its own files with the internet
+unplugged.
 
-## How to run
+## Repository layout (kit format)
 
-No build step and no dependencies.
+| Path | Purpose |
+| --- | --- |
+| `main.ts` | Hand-in program (Node 22, standard library only): copies `app/` and `screenshots/` to the output directory and writes `dossier.json` with the vendored library |
+| `app/` | The static web app — `index.html`, `app.js`, `styles.css`. No build step |
+| `screenshots/` | Three PNG screenshots: an exported portrait cover, the editor with a photo loaded, an exported landscape cover |
+| `vendor/makefun-app.ts` | The kit's dossier library, byte-identical to the kit copy (the gate rebuilds the dossier with it and compares) |
+| `smoke.test.mjs` | Smoke tests (see below) |
+| `LICENSE` | MIT |
+| `.makefun/owner.json` | make.fun ownership claim (wallet address) |
 
-**Option A — just open it**
+## How to run the app
 
-Open `index.html` in any modern desktop browser.
-
-**Option B — local server (recommended)**
+Serve `app/` with any static file server and open it in desktop Chrome, e.g.:
 
 ```bash
-node server.mjs          # or: node server.mjs 8080
-# then visit http://localhost:5173/
+python3 -m http.server 8080 --directory app
+# then visit the local address it prints
 ```
 
-Requires Node.js (any recent LTS) for the optional server only; the app
-itself is plain HTML/CSS/JS.
+Opening `app/index.html` directly in a browser also works. No build step,
+no dependencies.
 
-**Main entry:** `index.html` (loads `styles.css` and `app.js`). This is a
-standalone static web app in the hosted-on-makefun style — serve the whole
-folder as static files and `index.html` is the program entry point. There is
-no compile step; an optional `main.ts` wrapper is unnecessary for a
-zero-dependency static program, so the entry is documented here instead.
+## Hand in (build the entry output)
+
+```bash
+mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
+```
+
+This writes `out/app/`, `out/screenshots/` and `out/dossier.json`. Running it
+twice produces byte-identical output.
 
 ## Features
 
-- **Photo upload** by file picker or drag-and-drop, with zoom and
-  vertical-focus sliders (cover-fit, never stretched).
-- **Demo mode** — a procedurally generated gradient scene (sun disc, generic
-  skyline, sea band, palm silhouettes, all drawn in code) so the app works
-  before you add a photo, and a *Clear photo* button to return to it.
+- **Multi-panel poster layout** — five panels (hero + four supporting), each
+  with a white keyline and gutter, in every export size.
+- **Any photo, any panel** — add several photos; assign each panel its own
+  photo or the demo scene; per-panel zoom and X/Y position sliders; one photo
+  can fill several panels with different crops.
+- **Demo mode** — a procedurally generated scene (sun disc, generic skyline,
+  sea band, palm silhouettes, all drawn in code, shifted per panel) so the app
+  works before you add a photo.
 - **Live preview** on a canvas whose internal resolution *is* the export
-  resolution, so what you see is exactly what downloads.
-- **Three original styles / layouts:**
+  resolution, with a dashed outline on the panel being edited.
+- **Three original styles:**
   - **Sunset Vice** — warm sunset colour wash, teal shadows, bottom title
     block with accent rule.
   - **Neon Night** — midnight grade, glowing cyan/magenta double frame,
     centred top title with neon underline.
   - **Comic Halftone** — high-contrast grade, printed halftone dot overlay,
     thick ink border, angled yellow title banner.
-- **Text controls** — title (auto-wrapped, up to 3 lines), caption/subtitle,
-  and a corner tag pill.
+- **Text controls** — title (auto-wrapped, up to 3 lines), subtitle, and a
+  corner tag pill.
 - **Print grain** texture toggle (generated noise, drawn locally).
-- **PNG export** at 1024 × 1536 via `canvas.toBlob` + download.
-
-## Files
-
-| File | Purpose |
-| --- | --- |
-| `index.html` | App shell, controls, and the 1024×1536 preview/export canvas |
-| `app.js` | All logic: demo scene, photo cover-fit, treatments, text, export |
-| `styles.css` | UI styling (system font stack only) |
-| `server.mjs` | Zero-dependency Node static server for local running |
-| `smoke.test.mjs` | Smoke test (see below) |
-| `README.md` | This file |
+- **PNG export** at 1080 × 1080, 1080 × 1350 and 1920 × 1080 via
+  `canvas.toBlob` + download.
 
 ## Test
 
@@ -83,24 +89,23 @@ zero-dependency static program, so the entry is documented here instead.
 node smoke.test.mjs
 ```
 
-Checks that all deliverable files exist, the canvas is ≥1024px wide, PNG
-export / download / upload / drag-and-drop logic is present, all three
-styles are wired, and that no external URLs, CDNs, or network calls appear
-in the app code.
+Checks the kit structure: `app/index.html` references only files inside
+`app/`; the three screenshots are PNGs within the gate's size and dimension
+limits; `vendor/makefun-app.ts` is byte-identical to the kit's copy (sha256);
+`app.js` parses as an ES module; and `node main.ts` produces `app/`,
+`screenshots/` and a valid `dossier.json`, byte-identical across two runs.
 
 ## make.fun
 
 - Bounty: `gta6-cover-art-01` — "Make GTA 6 Cover Art"
-- Badge: _placeholder — add the official make.fun bounty badge/link here on
-  submission_
-- Status: local prototype only — **not submitted**
+- Status: restructured to the official kit format locally — **not submitted**
+  from this workspace.
 
 ## Limitations
 
-- Text uses locally available system font stacks (`Arial Black` / `Impact` /
-  system-ui fallbacks), so exact title rendering varies slightly by OS.
-- Colour treatments use canvas filters and overlays; very large source
-  photos are scaled to cover the 1024×1536 canvas, not edited at full
-  resolution.
-- No cropping UI beyond zoom + vertical focus, and no multi-page / batch
-  export.
+- Title lettering uses locally available system font stacks (`Arial Black` /
+  `Impact` / system-ui fallbacks), so exact rendering varies slightly by OS.
+- Colour treatments use canvas filters and overlays; very large source photos
+  are scaled to cover their panel, not edited at full resolution.
+- The screenshots are faithful renders of the app's own layout, styles and
+  lettering, drawn with the same panel fractions and crops the app uses.
